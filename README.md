@@ -18,3 +18,11 @@ go get -u gorm.io/gorm
 go get -u gorm.io/driver/mysql
 ```
 
+## Air (Hot Reloading)
+
+[cosmtrek/air: ☁️ Live reload for Go apps (github.com)](https://github.com/cosmtrek/air)
+
+```sh
+go get -u github.com/cosmtrek/air
+```
+
