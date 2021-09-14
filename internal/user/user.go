@@ -1,4 +1,4 @@
-package main
+package user
 
 import (
 	"errors"
@@ -17,14 +17,22 @@ type User struct {
 	Email    string `json:"email"`
 }
 
+type Service struct {
+	Db *gorm.DB
+}
+
+func NewService(db *gorm.DB) *Service {
+	return &Service{Db: db}
+}
+
 // Create User
-func saveUser(c echo.Context) error {
+func (s *Service) Create(c echo.Context) error {
 	u := new(User)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
 
-	if err := Db.Create(&u).Error; err != nil {
+	if err := s.Db.Create(&u).Error; err != nil {
 		return c.String(http.StatusBadRequest, "Something Wrong")
 	}
 
@@ -32,11 +40,11 @@ func saveUser(c echo.Context) error {
 }
 
 // Get User
-func getUser(c echo.Context) error {
+func (s *Service) Get(c echo.Context) error {
 	id := c.Param("id")
 
 	var user User
-	if err := Db.First(&user, "id = ?", id).Error; err != nil {
+	if err := s.Db.First(&user, "id = ?", id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.String(http.StatusNotFound, "Not found")
 		}
@@ -48,7 +56,7 @@ func getUser(c echo.Context) error {
 }
 
 // Update User
-func updateUser(c echo.Context) error {
+func (s *Service) Update(c echo.Context) error {
 	id := c.Param("id")
 
 	u := new(User)
@@ -56,7 +64,7 @@ func updateUser(c echo.Context) error {
 		return err
 	}
 
-	if err := Db.Where("id = ?", id).Updates(u).Error; err != nil {
+	if err := s.Db.Where("id = ?", id).Updates(u).Error; err != nil {
 		return c.String(http.StatusBadRequest, "Something bad happend")
 	}
 
@@ -64,11 +72,11 @@ func updateUser(c echo.Context) error {
 }
 
 // Delete User
-func deleteUser(c echo.Context) error {
+func (s *Service) Delete(c echo.Context) error {
 	id := c.Param("id")
 
 	var user User
-	if err := Db.Delete(&user, id).Error; err != nil {
+	if err := s.Db.Delete(&user, id).Error; err != nil {
 		return c.String(http.StatusBadRequest, "Something bad happend")
 	}
 
