@@ -9,6 +9,14 @@ import (
 	"gorm.io/gorm"
 )
 
+// User Struct
+type User struct {
+	gorm.Model
+	Name     string `json:"name"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
+}
+
 // Create User
 func saveUser(c echo.Context) error {
 	u := new(User)

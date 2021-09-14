@@ -10,14 +10,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// User Struct
-type User struct {
-	gorm.Model
-	Name     string `json:"name"`
-	Password string `json:"password"`
-	Email    string `json:"email"`
-}
-
 var Db *gorm.DB
 
 func main() {
@@ -30,8 +22,10 @@ func main() {
 
 	Db = db
 
-	// Migrate the schema
+	// Migrate the schema:
+	// https://github.com/golang-migrate/migrate
 	db.AutoMigrate(&User{})
+	db.AutoMigrate(&Post{})
 
 	// Start Server
 	e := echo.New()
@@ -62,6 +56,13 @@ func main() {
 	}
 	r.Use(middleware.JWTWithConfig(config))
 	r.GET("", restricted)
+
+	// Post Service
+	r.POST("/posts", createPost)
+	r.GET("/posts", listPost)
+	r.GET("/posts/:id", getPost)
+	r.PUT("/posts/:id", updatePost)
+	r.DELETE("/posts/:id", deletePost)
 
 	// Run Server
 	e.Logger.Fatal(e.Start(":1323"))
