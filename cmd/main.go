@@ -4,9 +4,12 @@ import (
 	"gobook/internal/auth"
 	"gobook/internal/post"
 	"gobook/internal/user"
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/driver/mysql"
@@ -14,9 +17,14 @@ import (
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	// Database connection
 	// dsn must be secret!
-	dsn := "root:example@tcp(127.0.0.1:3306)/gobook?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := os.Getenv("DB_CONNECTION")
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
@@ -60,9 +68,10 @@ func main() {
 	// Restricted group
 	r := e.Group("/private")
 	// Configure middleware with the custom claims type
+	jwtSecret := os.Getenv("JWT_SECRET")
 	config := middleware.JWTConfig{
 		Claims:     &auth.JwtCustomClaims{},
-		SigningKey: []byte("secret"),
+		SigningKey: []byte(jwtSecret),
 	}
 	r.Use(middleware.JWTWithConfig(config))
 	// GET: /private

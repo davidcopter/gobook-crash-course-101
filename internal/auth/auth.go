@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"net/http"
+	"os"
 	"time"
 
 	"gobook/internal/user"
@@ -61,7 +62,8 @@ func (s *Service) Login(c echo.Context) error {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Generate encoded token and send it as response.
-	t, err := token.SignedString([]byte("secret"))
+	jwtSecret := os.Getenv("JWT_SECRET")
+	t, err := token.SignedString([]byte(jwtSecret))
 	if err != nil {
 		return err
 	}

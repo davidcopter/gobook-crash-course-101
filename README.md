@@ -1,5 +1,6 @@
 # Gobook Crash Course 101
- golang crash couse project: `Gobook` like facebook  with user-service and post-service using mysql and jwt
+
+golang crash couse project: `Gobook` like facebook with user-service and post-service using mysql and jwt
 
 # Setup
 
@@ -42,9 +43,12 @@ go get -u github.com/golang-jwt/jwt
 
 ```sh
  go get github.com/labstack/echo/middleware
- 
+
  "github.com/labstack/echo/v4/middleware"
 ```
 
+## Environment Variable
 
-
+```sh
+go get github.com/joho/godotenv
+```
