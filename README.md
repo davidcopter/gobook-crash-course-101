@@ -1,8 +1,6 @@
 # Gobook Crash Course 101
  Golang crash course project: `Gobook` like Facebook  with user-service and post-service using MySQL and JWT
 
-[TOC]
-
 ## Basic Of Backend Development
 
 ### Client-Server
