@@ -46,9 +46,16 @@ func (s *Service) Create(c echo.Context) error {
 }
 
 func (s *Service) List(c echo.Context) error {
-	var posts []Post
-	if result := s.Db.Find(&posts); result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+	type PostList struct {
+		gorm.Model
+		Title string `json:"title"`
+		Body  string `json:"body"`
+		Name  string
+	}
+
+	var posts []PostList
+	if err := s.Db.Model(&Post{}).Select("posts.*, users.name").Joins("INNER JOIN users ON posts.user_id = users.id").Limit(10).Scan(&posts).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.String(http.StatusNotFound, "Not Found")
 		}
 		return c.String(http.StatusInternalServerError, "Something wrong")
