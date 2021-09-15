@@ -2,15 +2,13 @@ package post
 
 import (
 	"errors"
-	"gobook/internal/auth"
+	"gobook/internal/utils"
 	"net/http"
 
-	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
-// `Post` belongs to `User`, `UserId` is the foreign key
 type Post struct {
 	gorm.Model
 	Title  string `json:"title"`
@@ -27,25 +25,30 @@ func NewService(db *gorm.DB) *Service {
 }
 
 func (s *Service) Create(c echo.Context) error {
+	// Binding Request
 	p := new(Post)
 	if err := c.Bind(p); err != nil {
 		return err
 	}
 
-	// Get jwtCustomClaims
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(*auth.JwtCustomClaims)
+	// Get jwtCustomClaims utils
+	user := utils.GetJWTClaims(c)
 
 	// Assign user id
-	p.UserId = claims.ID
+	p.UserId = user.ID
+
+	// Create to table posts using &p struct &Post{}
 	if err := s.Db.Create(&p).Error; err != nil {
 		return c.String(http.StatusInternalServerError, "Something wrong")
 	}
 
+	// Response
 	return c.String(http.StatusCreated, "SUCCESSED")
 }
 
 func (s *Service) List(c echo.Context) error {
+	// Response struct
+	// `json:"title"` => content-type: application/json
 	type PostList struct {
 		gorm.Model
 		Title string `json:"title"`
@@ -68,8 +71,8 @@ func (s *Service) Get(c echo.Context) error {
 	id := c.Param("id")
 
 	var post Post
-	if result := s.Db.First(&post, id); result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+	if err := s.Db.First(&post, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.String(http.StatusNotFound, "Not Found")
 		}
 		return c.String(http.StatusInternalServerError, "Something wrong")

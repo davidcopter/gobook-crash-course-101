@@ -13,17 +13,14 @@ import (
 	"gorm.io/gorm"
 )
 
-var Db *gorm.DB
-
 func main() {
 	// Database connection
+	// dsn must be secret!
 	dsn := "root:example@tcp(127.0.0.1:3306)/gobook?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
-
-	Db = db
 
 	// Migrate the schema:
 	// https://github.com/golang-migrate/migrate
@@ -38,9 +35,9 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Initial Service
-	authService := auth.NewService(Db)
-	userService := user.NewService(Db)
-	postService := post.NewService(Db)
+	authService := auth.NewService(db)
+	userService := user.NewService(db)
+	postService := post.NewService(db)
 
 	// Routing
 	e.GET("/", func(c echo.Context) error {
@@ -50,14 +47,15 @@ func main() {
 	// Authication Router
 	e.POST("/login", authService.Login)
 
-	// Unauthenticated route
-	e.GET("/public", accessible)
-
 	// User Router
 	e.POST("/users", userService.Create)
 	e.GET("/users/:id", userService.Get)
 	e.PUT("/users/:id", userService.Update)
 	e.DELETE("/users/:id", userService.Delete)
+
+	// Unauthenticated route
+	// GET: /private
+	e.GET("/public", accessible)
 
 	// Restricted group
 	r := e.Group("/private")
@@ -67,6 +65,7 @@ func main() {
 		SigningKey: []byte("secret"),
 	}
 	r.Use(middleware.JWTWithConfig(config))
+	// GET: /private
 	r.GET("", restricted)
 
 	// Post Service
