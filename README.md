@@ -1,7 +1,30 @@
 # Gobook Crash Course 101
  Golang crash course project: `Gobook` like Facebook  with user-service and post-service using MySQL and JWT
 
-## Basic Of Backend Development
+## Requirements
+
+Laboratory requirements
+
+### Hardware
+
+- Computer 
+
+### Software
+
+- Web Browser (recommended: Google Chrome, Microsoft Edge)
+- WSL2 (Windows Subsystem for Linux) for run docker (*Microsoft Windows  Only)
+  - https://docs.microsoft.com/en-us/windows/wsl/install-win10
+- Docker Desktop
+  - Windows https://docs.docker.com/desktop/windows/install/ 
+  - MacOS https://docs.docker.com/desktop/mac/install/
+- Golang https://golang.org/dl/
+- Visual Studio Code https://code.visualstudio.com/
+- VS Code Extensions: 
+- Go https://marketplace.visualstudio.com/items?itemName=golang.go
+- Postman https://www.postman.com/
+- DBeaver https://dbeaver.io/
+
+## Basic Of API Development
 
 ### Client-Server
 
@@ -27,8 +50,6 @@ An example from https://guides.rubyonrails.org/routing.html
 ### HTTP Status Code
 
 [HTTP status code - A Complete List of HTTP Status Codes (infidigit.com)](https://www.infidigit.com/blog/http-status-codes/)
-
-![List of HTTP Status Codes](https://www.infidigit.com/wp-content/uploads/2019/12/20191227_012601_0000.png)
 
 ## Echo 💕
 
