@@ -4,12 +4,10 @@ import (
 	"gobook/internal/auth"
 	"gobook/internal/post"
 	"gobook/internal/user"
-	"log"
 	"net/http"
 	"os"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/driver/mysql"
@@ -17,11 +15,6 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
 	// Database connection
 	// dsn must be secret!
 	dsn := os.Getenv("DB_CONNECTION")
